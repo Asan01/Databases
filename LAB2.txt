@@ -1,0 +1,47 @@
+CREATE DATABASE LAB2;
+
+CREATE TABLE countries(
+  country_id SERIAL PRIMARY KEY,
+  country_name VARCHAR(50),
+  region_id INTEGER,
+  population INTEGER
+);
+
+INSERT INTO countries VALUES(1,'KZ', 11, 20000000);
+
+INSERT INTO countries(country_id, country_name) VALUES (2, 'France');
+
+INSERT INTO countries VALUES(2, 'France', Null, 60000);
+
+INSERT INTO countries VALUES (3, 'UK', 22, 70000), (4, 'US', 33, 80000), (5, 'Canada', 33, 70000);
+
+ALTER TABLE countries ALTER COLUMN country_name SET DEFAULT 'Kazakhstan';
+
+INSERT INTO countries VALUES (6, DEFAULT, 11, 20000000);
+
+INSERT INTO countries DEFAULT VALUES;
+
+
+CREATE TABLE countries_new(
+  LIKE countries
+);
+
+INSERT INTO countries_new
+SELECT * FROM countries;
+
+UPDATE countries SET region_id = 1
+where region_id is NULL;
+
+UPDATE countries SET population = population * (population * 0.1)
+  returning country_name, population as "New Population";
+
+DELETE FROM countries
+WHERE population < 100000;
+
+DELETE FROM countries_new
+AS cn USING countries as co
+WHERE cn.country_id=co.country_id
+RETURNING *;
+
+DELETE FROM countries
+RETURNING *;
